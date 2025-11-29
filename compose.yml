@@ -10,38 +10,22 @@ services:
       - "8080:8080"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./certs:/certs:ro
       - ./dynamic:/dynamic:ro
+      - ./traefik.yml:/etc/traefik/traefik.yml:ro
     restart: always
     networks:
       - proxy
-    command:
-      - "--entrypoints.web.address=:80"
-      - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
-      - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
-      - "--entrypoints.web.http.redirections.entrypoint.permanent=true"
-      - "--entrypoints.websecure.address=:443"
-      - "--entrypoints.websecure.http.tls=true"
-      - "--providers.file.filename=/dynamic/tls.yml"
-      - "--providers.docker=true"
-      - "--providers.docker.exposedbydefault=false" # Cette ligne empêche Traefik de détecter automatiquement tous les conteneurs Docker mais permet de les activer individuellement avec des labels.
-      - "--providers.docker.network=proxy" # Spécifie le réseau Docker à utiliser pour la découverte des services. ici, le réseau 'proxy'.
-      - "--api.dashboard=true"
-      - "--api.insecure=false"
-      - "--log.level=INFO"
-      - "--accesslog=true"
-      - "--metrics.prometheus=true" # Active la collecte de métriques Prometheus tel que : nombre de requêtes, latence, etc.
     labels:
       - "traefik.enable=true"
 
       # Dashboard router
-      - "traefik.http.routers.dashboard.rule=Host(`dashboard.docker.localhost`)"
+      - "traefik.http.routers.dashboard.rule=Host(`traefik.{{domain.name}}`)" # Remplacer {{domain.name}} par votre nom de domaine
       - "traefik.http.routers.dashboard.entrypoints=websecure"
       - "traefik.http.routers.dashboard.service=api@internal" # Utilise le service interne de l'API Traefik pour le dashboard
       - "traefik.http.routers.dashboard.tls=true"
 
       # Basic‑auth middleware
-      - "traefik.http.middlewares.dashboard-auth.basicauth.users=admin:$$apr1$$WPDYlChT$$yghiWRSLNgU0Auqn9M9oN0"
+      - "traefik.http.middlewares.dashboard-auth.basicauth.users={{hashed_user}}" # Remplacer {{hashed_user}} par l'utilisateur et le mot de passe haché
       - "traefik.http.routers.dashboard.middlewares=dashboard-auth@docker"
 
   # Whoami application

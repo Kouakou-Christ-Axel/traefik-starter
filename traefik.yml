@@ -5,9 +5,9 @@ entryPoints:
       tls:
         certResolver: cfresolver
         domains:
-          - main: "example.com" # Remplacer avec votre nom de domaine principal
+          - main: "{{domain.name}}" # Remplacer avec votre nom de domaine principal
             sans:
-              - "*.example.com" # Remplacer avec vos noms de domaine secondaires
+              - "*.{{domain.name}}" # Remplacer avec vos noms de domaine secondaires
 
   web:
     address: ":80"
@@ -33,7 +33,7 @@ api:
 certificatesResolvers:
   cfresolver:
     acme:
-      email: "test@example.com"
+      email: "{{email}}"
       storage: "/letsencrypt/acme.json"
       dnsChallenge:
         provider: cloudflare
