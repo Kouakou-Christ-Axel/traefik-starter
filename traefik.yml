@@ -1,0 +1,45 @@
+entryPoints:
+  websecure:
+    address: ":443"
+    http:
+      tls:
+        certResolver: cfresolver
+        domains:
+          - main: "example.com" # Remplacer avec votre nom de domaine principal
+            sans:
+              - "*.example.com" # Remplacer avec vos noms de domaine secondaires
+
+  web:
+    address: ":80"
+    http:
+      redirections:
+        entryPoint:
+          to: websecure
+          scheme: https
+          permanent: true
+
+providers:
+  docker:
+    exposedByDefault: false
+    network: proxy
+
+  file:
+    directory: "/etc/traefik/dynamic"
+    watch: true
+api:
+  dashboard: true
+  insecure: false
+
+certificatesResolvers:
+  cfresolver:
+    acme:
+      email: "test@example.com"
+      storage: "/letsencrypt/acme.json"
+      dnsChallenge:
+        provider: cloudflare
+
+log:
+  level: INFO
+
+accessLog:
+  bufferingSize: 0
