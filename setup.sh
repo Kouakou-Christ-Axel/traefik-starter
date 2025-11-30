@@ -45,7 +45,7 @@ HASHED_PASSWORD=$(openssl passwd -apr1 "$PASSWORD")
 
 # Échapper les caractères spéciaux pour sed
 HASHED_USER="$USERNAME:$HASHED_PASSWORD"
-ESCAPED_HASHED_USER=$(echo "$HASHED_USER" | sed 's/\$/\\$/g' | sed 's/\//\\\//g')
+ESCAPED_HASHED_USER=$(echo "$HASHED_USER" | sed 's/\$/\$\$/g' | sed 's/\//\\\//g')
 
 # Remplacer dans compose.yml
 if [ -f "compose.yml" ]; then
