@@ -28,7 +28,7 @@ echo ""
 read -p "Entrez le nom de domaine pour Traefik (ex: example.com): " DOMAIN
 echo ""
 
-read -p "Entrez votre token cloudflare: " CLOUDFLARE_TOKEN
+read -sp "Entrez votre token cloudflare: " CLOUDFLARE_TOKEN
 echo ""
 
 # Créer le dossier secrets s'il n'existe pas

@@ -1,3 +1,9 @@
+secrets:
+  cloudflare-token:
+    file: ./secrets/cloudflare-token.secret
+  cloudflare-email:
+    file: ./secrets/cloudflare-email.secret
+
 services:
   traefik:
     container_name: traefik
@@ -7,11 +13,17 @@ services:
     ports:
       - "80:80"
       - "443:443"
-      - "8080:8080"
+    secrets:
+      - "cloudflare-token"
+      - "cloudflare-email"
+    environment:
+      - "CF_DNS_API_TOKEN_FILE=/run/secrets/cloudflare-token" # Utilise un secret Docker pour stocker le token API Cloudflare de manière sécurisée.
+      - "CF_API_EMAIL_FILE=/run/secrets/cloudflare-email" # Utilise un secret Docker pour stocker l'email Cloudflare de manière sécurisée.
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./dynamic:/dynamic:ro
       - ./traefik.yml:/etc/traefik/traefik.yml:ro
+      - ./certs:/letsencrypt
     restart: always
     networks:
       - proxy
