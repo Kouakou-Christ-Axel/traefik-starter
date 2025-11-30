@@ -7,7 +7,7 @@ secrets:
 services:
   traefik:
     container_name: traefik
-    image: traefik:v3.5
+    image: traefik:v3.6.2
     security_opt:
       - no-new-privileges:true # Renforce la sécurité en empêchant l'élévation de privilèges dans le conteneur.
     ports:
@@ -21,7 +21,7 @@ services:
       - "CF_API_EMAIL_FILE=/run/secrets/cloudflare-email" # Utilise un secret Docker pour stocker l'email Cloudflare de manière sécurisée.
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./dynamic:/dynamic:ro
+      - ./dynamic:/etc/traefik/dynamic:ro
       - ./traefik.yml:/etc/traefik/traefik.yml:ro
       - ./certs:/letsencrypt
     restart: always
